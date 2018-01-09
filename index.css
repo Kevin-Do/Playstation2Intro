@@ -1,8 +1,43 @@
-#info {
-	position: absolute;
-	top: 10px;
-	width: 100%;
-	text-align: center;
-	z-index: 100;
-	display:block;
+html {
+    width: 100%; 
+    height: 100% 
 }
+canvas { 
+    width: 100%; 
+    height: 100% 
+}
+
+@keyframes fadingSonyText {
+    0%      {opacity: 0;}
+    35%     {opacity: 1;}
+    65%     {opacity: 1;}
+    100%    {opacity: 0;}
+}
+
+#info {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    z-index: 100;
+    color: white;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 50px;
+    font-weight: bold;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;
+    transform: scale(1.1,0.8);
+    animation-name: fadingSonyText;
+    animation-duration: 4s;
+    animation-delay: 1s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+    opacity: 0;
+}
+#restart {
+    position: absolute;
+    top: 80%;
+    left: 80%;
+    text-align: center;
+}
+
