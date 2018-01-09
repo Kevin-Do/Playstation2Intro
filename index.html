@@ -1,0 +1,75 @@
+<html>
+	<head>
+		<title>Playstation 2</title>
+		<style>
+			html { width: 100%; height: 100% }
+            canvas { width: 100%; height: 100% }
+            #info {
+                position: absolute;
+                top: 50%;
+                width: 100%;
+                text-align: center;
+                z-index: 100;
+                color: white;
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                font-size: 50px;
+                font-weight: bold;
+                -webkit-text-stroke-width: 2px;
+                -webkit-text-stroke-color: black;
+                transform: scale(1.1,0.8)
+            }
+            #restart {
+                position: absolute;
+                top: 80%;
+                left: 80%;
+                text-align: center;
+            }
+		</style>
+	</head>
+	<body>
+        <div id="info">Sony Computer Entertainment</div>
+        <button id="restart"> Restart </button>
+		<script src="js/three.js"></script>
+		<script>
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+			var cube = new THREE.Mesh( geometry, material );
+			scene.add( cube );
+
+			camera.position.z = 5;
+
+			var animate = function () {
+				requestAnimationFrame( animate );
+
+				cube.rotation.x += 0.1;
+				cube.rotation.y += 0.1;
+
+				renderer.render(scene, camera);
+			};
+
+			animate();
+
+            var listener = new THREE.AudioListener();
+            camera.add( listener );
+
+            // create a global audio source
+            var sound = new THREE.Audio( listener );
+
+            // load a sound and set it as the Audio object's buffer
+            var audioLoader = new THREE.AudioLoader();
+            audioLoader.load( 'sounds/startup.mp3', function( buffer ) {
+                sound.setBuffer( buffer );
+                sound.setLoop( false );
+                sound.setVolume( 0.5 );
+                sound.play();
+            });
+		</script>
+	</body>
+</html>
