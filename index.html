@@ -2,30 +2,7 @@
 	<head>
         <title>Playstation 2</title>
         <link rel="stylesheet" href="./index.css">
-		<style>
-			html { width: 100%; height: 100% }
-            canvas { width: 100%; height: 100% }
-            #info {
-                position: absolute;
-                top: 50%;
-                width: 100%;
-                text-align: center;
-                z-index: 100;
-                color: white;
-                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-                font-size: 50px;
-                font-weight: bold;
-                -webkit-text-stroke-width: 2px;
-                -webkit-text-stroke-color: black;
-                transform: scale(1.1,0.8)
-            }
-            #restart {
-                position: absolute;
-                top: 80%;
-                left: 80%;
-                text-align: center;
-            }
-		</style>
+        <meta charset="utf-8"/>
 	</head>
 	<body>
         <div id="info">Sony Computer Entertainment</div>
@@ -33,25 +10,78 @@
         <script src="js/three.js"></script>
         
 		<script>
+            //Setup
+            //-----
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+            scene.fog = new THREE.Fog(0x265b9b, 90, 500);
+            scene.background = new THREE.Color( 0x191819 );
+            scene.fog = new THREE.Fog(0x005B96, 1, 100);
+
+			var camera = new THREE.PerspectiveCamera( 25, window.innerWidth/window.innerHeight, 1, 1100 );
+            camera.target = new THREE.Vector3(0, 0, 0);
+            camera.lookAt(camera.target);
+            camera.position.z = 100;
 
 			var renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
 
-			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-			var cube = new THREE.Mesh( geometry, material );
-			scene.add( cube );
+            var clock = new THREE.Clock();
 
-			camera.position.z = 5;
+            //Lighting
+            //--------
+
+            var light = new THREE.PointLight( 0xffffff, 3, 100, 2 );
+            light.position.set( 0, 0, 100 );
+            scene.add( light );
+
+            //Basic Box
+            //---------
+            var positionDict = {};
+            for (x = -4; x < 6; x++){
+                for (y = -4; y < 4; y++){
+                    var geometry = new THREE.BoxGeometry( .8, .8, 10 );
+                    var material = new THREE.MeshPhongMaterial( { color: 0x474141 } );
+                    var cube = new THREE.Mesh( geometry, material );
+                    var wildX = Math.random(); 
+                    var wildY = 0.5 + Math.random();
+                    var posX = x * 1.5 * wildX;
+                    var posY = y * wildY;
+                    if (positionDict[Math.floor(posX)] == Math.floor(posY)){
+                        break;
+                    }
+                    else {
+                        positionDict[Math.floor(posX)] = Math.floor(posY);
+                        console.log(positionDict[posX]);
+                        cube.position.set(posX, posY ,70)
+                        scene.add( cube );
+                    }
+                }
+            }
+
+            
+            function cameraAnimate(){
+                if (clock.getElapsedTime() < 9){
+                    console.log("SLOW");
+                    camera.position.z -= .01;
+                    camera.rotation.z += .00005;
+                }
+                else if (clock.getElapsedTime() > 11){
+                    return;
+                }
+                else{
+                    console.log("FAST");
+                    camera.position.z -= .8;
+                    camera.rotation.z += .02;
+                }
+            } 
 
 			var animate = function () {
+                
 				requestAnimationFrame( animate );
-
-				cube.rotation.x += 0.1;
-				cube.rotation.y += 0.1;
+				cameraAnimate()
+                
+                camera.rotation.z += .002;
 
 				renderer.render(scene, camera);
 			};
