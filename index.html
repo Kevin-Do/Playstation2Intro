@@ -13,14 +13,14 @@
             //Setup
             //-----
 			var scene = new THREE.Scene();
-            scene.fog = new THREE.Fog(0x265b9b, 90, 500);
+            //scene.fog = new THREE.Fog(0x265b9b, 90, 500);
             scene.background = new THREE.Color( 0x191819 );
-            scene.fog = new THREE.Fog(0x005B96, 1, 100);
+            //scene.fog = new THREE.Fog(0x005B96, 1, 100);
 
 			var camera = new THREE.PerspectiveCamera( 25, window.innerWidth/window.innerHeight, 1, 1100 );
             camera.target = new THREE.Vector3(0, 0, 0);
             camera.lookAt(camera.target);
-            camera.position.z = 100;
+            camera.position.z = 107;
 
 			var renderer = new THREE.WebGLRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
@@ -31,58 +31,137 @@
             //Lighting
             //--------
 
-            var light = new THREE.PointLight( 0xffffff, 3, 100, 2 );
-            light.position.set( 0, 0, 100 );
-            scene.add( light );
+            // var light = new THREE.PointLight( 0xffffff, 3, 100, 2 );
+            // light.position.set( 0, 0, 100 );
+            // scene.add( light );
+            var spotLight = new THREE.SpotLight( 0xffffff, .8 );
+            spotLight.position.set( 0, 0, 100 );
+
+            spotLight.castShadow = true;
+
+            spotLight.shadow.mapSize.width = 1024;
+            spotLight.shadow.mapSize.height = 1024;
+
+            spotLight.shadow.camera.near = 500;
+            spotLight.shadow.camera.far = 4000;
+            spotLight.shadow.camera.fov = 30;
+
+            scene.add( spotLight );
 
             //Basic Box
             //---------
             var positionDict = {};
-            for (x = -4; x < 6; x++){
-                for (y = -4; y < 4; y++){
-                    var geometry = new THREE.BoxGeometry( .8, .8, 10 );
-                    var material = new THREE.MeshPhongMaterial( { color: 0x474141 } );
+            var numX = 14;
+            var numY = 8;
+
+            var mGlass = new THREE.MeshLambertMaterial( {
+                color: 0xccccff, 
+                //envMap: camera.renderTarget, 
+                refractionRatio: 0.985, 
+                reflectivity: 0.9 
+            } );
+            
+
+            
+            //camera.renderTarget.mapping = new THREE.CubeRefractionMapping();
+            
+            var path = "textures/cube/SwedishRoyalCastle/";
+				var format = '.jpg';
+				var urls = [
+						path + 'px' + format, path + 'nx' + format,
+						path + 'py' + format, path + 'ny' + format,
+						path + 'pz' + format, path + 'nz' + format
+					];
+
+            var refractionCube = new THREE.CubeTextureLoader().load( urls );
+            refractionCube.mapping = THREE.CubeRefractionMapping;
+            refractionCube.format = THREE.RGBFormat;
+
+            var cubeMaterial2 = new THREE.MeshLambertMaterial( { color: 0xffee00, refractionRatio: 0.95 } );
+
+                
+            //var cubeMaterial3 = new THREE.MeshPhongMaterial( { color: 0xccddff, envMap: textureCube, refractionRatio: 0.98, reflectivity: 0.9 } );
+
+            for (x = -numX/2; x < numX/2; x++){
+                for (y = -numY/2; y < numY/2; y++){
+
+                    if(Math.random()  < .07){
+                        continue;
+                    }
+                    if(Math.random() * (1-(x*x*y*y/ (numX*numX/4 - 2) /(numY*numY/4 - 2))) < .3){
+                        continue;
+                    }
+                    var geometry = new THREE.BoxGeometry( 1, 1, 5 + Math.random()*(15 - (x*x)/3) );
+                    var ranGrey = new THREE.Color(`hsl(189, 0%, ${40 + Math.floor(Math.random() * 30)}%)`);
+                    var material = new THREE.MeshPhongMaterial( {color: ranGrey, transparent: true, refractionRatio: 0.7, reflectivity: 0.9});
+                    material.emissive = ranGrey;
+                    material.emissiveIntensity = .2;
                     var cube = new THREE.Mesh( geometry, material );
-                    var wildX = Math.random(); 
-                    var wildY = 0.5 + Math.random();
-                    var posX = x * 1.5 * wildX;
-                    var posY = y * wildY;
-                    if (positionDict[Math.floor(posX)] == Math.floor(posY)){
-                        break;
-                    }
-                    else {
-                        positionDict[Math.floor(posX)] = Math.floor(posY);
-                        console.log(positionDict[posX]);
-                        cube.position.set(posX, posY ,70)
-                        scene.add( cube );
-                    }
+                    cube.position.set(x * 1.2, y * 1.2 ,70)
+                    scene.add( cube );
                 }
             }
 
-            
+            glassBoxGeo = new THREE.BoxGeometry( 1, 1, 1 );
+            glassBoxMat = new THREE.MeshPhongMaterial( { color: 0x474141, transparent: true, opacity: 0.8 } ); 
+
+            var glassCube1 = new THREE.Mesh(glassBoxGeo, glassBoxMat);
+            var glassCube2 = new THREE.Mesh(glassBoxGeo, glassBoxMat);
+            var glassCube3 = new THREE.Mesh(glassBoxGeo, glassBoxMat);
+            var glassCube4 = new THREE.Mesh(glassBoxGeo, glassBoxMat);
+            var glassCube5 = new THREE.Mesh(glassBoxGeo, glassBoxMat);
+            glassCube1.position.set(-4, 1, 85);
+            glassCube2.position.set(3.5, 2, 86);
+            glassCube3.position.set(-0.5, .5, 81);
+            glassCube3.rotation.set(.3, .4, .1);
+            glassCube4.position.set(-2.8, -2, 88);
+            glassCube5.position.set(3, -1.3, 80);
+
+            scene.add(glassCube1);
+            scene.add(glassCube2);
+            scene.add(glassCube3);
+            scene.add(glassCube4);
+            scene.add(glassCube5);
+
+
+            function rotateGlassCubes(){
+                glassCube1.rotation.z -= 0.002;
+                glassCube1.rotation.x += 0.002;
+                
+                glassCube2.rotation.x -= 0.002;
+                glassCube2.rotation.z -= 0.002;
+
+                glassCube3.rotation.x += 0.002;
+
+                glassCube4.rotation.x += 0.002;
+                glassCube4.rotation.y -= 0.002;
+
+                glassCube5.rotation.x += 0.002;
+                glassCube5.rotation.y -= 0.002;
+
+
+            }
             function cameraAnimate(){
-                if (clock.getElapsedTime() < 9){
+                if (clock.getElapsedTime() < 8){
                     console.log("SLOW");
-                    camera.position.z -= .01;
-                    camera.rotation.z += .00005;
+                    camera.position.z -= .014;
+                    camera.rotation.z += .001;
                 }
-                else if (clock.getElapsedTime() > 11){
+                else if (clock.getElapsedTime() > 12){
                     return;
                 }
                 else{
                     console.log("FAST");
-                    camera.position.z -= .8;
-                    camera.rotation.z += .02;
+                    camera.position.z -= 1;
+                    camera.rotation.z += .025;
                 }
             } 
 
 			var animate = function () {
                 
 				requestAnimationFrame( animate );
-				cameraAnimate()
-                
-                camera.rotation.z += .002;
-
+				cameraAnimate();
+                rotateGlassCubes();
 				renderer.render(scene, camera);
 			};
 
