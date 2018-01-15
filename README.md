@@ -5,3 +5,6 @@ Boot up the PS2!
 
 Version 1:
 ![](https://i.imgur.com/MNGhM3X.png)
+
+
+Contributors: Kevin Do. Daniel Khasanov
