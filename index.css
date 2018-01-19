@@ -14,6 +14,13 @@ canvas {
     100%    {opacity: 0;}
 }
 
+@keyframes ps2logo {
+    0%      {opacity: 0;}
+    15%     {opacity: 1;}
+    95%     {opacity: 1;}
+    100%    {opacity: 0;}
+}
+
 #info {
     position: absolute;
     top: 50%;
@@ -34,10 +41,28 @@ canvas {
     animation-timing-function: ease-in-out;
     opacity: 0;
 }
+
+#ps2logo {
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    left: 35%;
+    text-align: center;
+    z-index: 100;
+    animation-name: fadingSonyText;
+    animation-duration: 3s;
+    animation-delay: 15s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+    opacity: 0;
+}
+
+
+
 #restart {
     position: absolute;
     top: 80%;
-    left: 80%;
+    left: 10%;
     text-align: center;
 }
 

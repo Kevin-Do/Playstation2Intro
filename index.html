@@ -6,16 +6,15 @@
 	</head>
 	<body>
         <div id="info">Sony Computer Entertainment</div>
-        <button id="restart"> Restart </button>
+        <img id = "ps2logo" src="./textures/ps2Logo.png" alt="Playstation 2 Logo">
+        <input id="restart" type="button" value="Refresh Page" onClick="window.location.reload()">
         <script src="js/three.js"></script>
         
 		<script>
             //Setup
             //-----
 			var scene = new THREE.Scene();
-            //scene.fog = new THREE.Fog(0x265b9b, 90, 500);
             scene.background = new THREE.Color( 0x191819 );
-            //scene.fog = new THREE.Fog(0x005B96, 1, 100);
 
 			var camera = new THREE.PerspectiveCamera( 25, window.innerWidth/window.innerHeight, 1, 1100 );
             camera.target = new THREE.Vector3(0, 0, 0);
@@ -31,9 +30,6 @@
             //Lighting
             //--------
 
-            // var light = new THREE.PointLight( 0xffffff, 3, 100, 2 );
-            // light.position.set( 0, 0, 100 );
-            // scene.add( light );
             var spotLight = new THREE.SpotLight( 0xffffff, .8 );
             spotLight.position.set( 0, 0, 100 );
 
@@ -50,37 +46,8 @@
 
             //Basic Box
             //---------
-            var positionDict = {};
             var numX = 14;
             var numY = 8;
-
-            var mGlass = new THREE.MeshLambertMaterial( {
-                color: 0xccccff, 
-                //envMap: camera.renderTarget, 
-                refractionRatio: 0.985, 
-                reflectivity: 0.9 
-            } );
-            
-
-            
-            //camera.renderTarget.mapping = new THREE.CubeRefractionMapping();
-            
-            var path = "textures/cube/SwedishRoyalCastle/";
-				var format = '.jpg';
-				var urls = [
-						path + 'px' + format, path + 'nx' + format,
-						path + 'py' + format, path + 'ny' + format,
-						path + 'pz' + format, path + 'nz' + format
-					];
-
-            var refractionCube = new THREE.CubeTextureLoader().load( urls );
-            refractionCube.mapping = THREE.CubeRefractionMapping;
-            refractionCube.format = THREE.RGBFormat;
-
-            var cubeMaterial2 = new THREE.MeshLambertMaterial( { color: 0xffee00, refractionRatio: 0.95 } );
-
-                
-            //var cubeMaterial3 = new THREE.MeshPhongMaterial( { color: 0xccddff, envMap: textureCube, refractionRatio: 0.98, reflectivity: 0.9 } );
 
             for (x = -numX/2; x < numX/2; x++){
                 for (y = -numY/2; y < numY/2; y++){
@@ -102,6 +69,8 @@
                 }
             }
 
+            //Glass Boxes
+            //-----------
             glassBoxGeo = new THREE.BoxGeometry( 1, 1, 1 );
             glassBoxMat = new THREE.MeshPhongMaterial( { color: 0x474141, transparent: true, opacity: 0.8 } ); 
 
@@ -124,6 +93,9 @@
             scene.add(glassCube5);
 
 
+            //Animation Functions
+            //-------------------
+
             function rotateGlassCubes(){
                 glassCube1.rotation.z -= 0.002;
                 glassCube1.rotation.x += 0.002;
@@ -138,7 +110,6 @@
 
                 glassCube5.rotation.x += 0.002;
                 glassCube5.rotation.y -= 0.002;
-
 
             }
             function cameraAnimate(){
@@ -158,22 +129,18 @@
             } 
 
 			var animate = function () {
-                
 				requestAnimationFrame( animate );
 				cameraAnimate();
                 rotateGlassCubes();
 				renderer.render(scene, camera);
 			};
-
 			animate();
 
+            //Sound Track
+            //-----------
             var listener = new THREE.AudioListener();
             camera.add( listener );
-
-            // create a global audio source
             var sound = new THREE.Audio( listener );
-
-            // load a sound and set it as the Audio object's buffer
             var audioLoader = new THREE.AudioLoader();
             audioLoader.load( 'sounds/startup.mp3', function( buffer ) {
                 sound.setBuffer( buffer );
